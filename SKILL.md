@@ -1,5 +1,5 @@
 ---
-name: snowskill-editing
+name: snowcut
 description: 制作"真人开场 + 动画画面节拍"的口播讲解视频。先了解创作者、盘点可用工具，再选择原声录音、普通 TTS 或可选的声音克隆；支持现有字幕、云端转写或本地 Whisper，不强制绑定任何服务商。
 ---
 

@@ -1,6 +1,6 @@
-# SnowSkill Editing
+# snowcut
 
-一个可分享的口播视频剪辑工作流，适用于 AI 编程助手。中文口播、英文讲解均可；首次使用先检查环境，所有选项由使用者自己选择。
+口播视频剪辑 skill。一个可分享的口播视频剪辑工作流，适用于 AI 编程助手。中文口播、英文讲解均可；首次使用先检查环境，所有选项由使用者自己选择。
 
 ## 它做什么
 
@@ -12,11 +12,11 @@
 
 ## 安装
 
-把整个文件夹复制到你的助手支持的 skills 目录，文件夹名用 `snowskill-editing`。Claude Code 的用户级示例：`~/.claude/skills/snowskill-editing/`；Codex：`~/.codex/skills/snowskill-editing/`。刷新客户端，确认它能发现这个 skill。其他客户端请按各自的安装说明操作。
+把整个文件夹复制到你的助手支持的 skills 目录，文件夹名用 `snowcut`。Claude Code 的用户级示例：`~/.claude/skills/snowcut/`；Codex：`~/.codex/skills/snowcut/`。刷新客户端，确认它能发现这个 skill。其他客户端请按各自的安装说明操作。
 
 示例请求：
 
-> 使用 snowskill-editing。先检查我的环境，再让我选择风格、格式、配音和转写方式。在下载、上传或产生费用之前先告诉我。
+> 使用 snowcut。先检查我的环境，再让我选择风格、格式、配音和转写方式。在下载、上传或产生费用之前先告诉我。
 
 ## 包含内容
 
