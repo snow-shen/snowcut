@@ -8,7 +8,7 @@
 
 **没有默认值：** 不预设风格、配音、转写服务商、平台或画幅。Fish Audio 和 ElevenLabs 都是可选的。现有字幕、本地 Whisper 和经授权的云端转写都是可行的替代路线。转写不需要声音克隆。
 
-可选的视觉方向（包括 Snow 的纸张手绘风格）见 [STYLE-SHEET.md](STYLE-SHEET.md)，其中任何一项都不会被自动应用。
+三种现成风格见 [STYLE-SHEET.md](STYLE-SHEET.md)：素白风（推荐起点）、深色科技风、大字海报风，也可以自定义。样例帧在 [examples/style-frames.html](examples/style-frames.html)，浏览器直接打开。风格由使用者选定，不会被自动应用。
 
 ## 安装
 
@@ -21,7 +21,8 @@
 ## 包含内容
 
 - `SKILL.md`：与服务商无关的工作流和入门引导说明。
-- `STYLE-SHEET.md`：可选风格，以及已选择内容的记录。
+- `STYLE-SHEET.md`：三种风格的配色、字体、动效规格，以及已选择内容的记录。
+- `examples/style-frames.html`：每种风格的样例帧（开头、正文、转场），可重播动效。
 - `references/`：转写与剪 gap、录制指导、开场钩子（可选）、质检与交付的详细说明。
 - `README.md`：安装与适用范围。
 
