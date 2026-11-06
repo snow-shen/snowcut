@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>动作样例</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  /* Easing tokens: the same table as references/staging.md */
+  :root {
+    --out: cubic-bezier(.2,.7,.2,1);       /* enter */
+    --back: cubic-bezier(.34,1.56,.64,1);  /* pop with overshoot */
+    --in: cubic-bezier(.55,0,1,.45);       /* slam: fastest at impact */
+    --exit: cubic-bezier(.4,0,1,1);        /* leave */
+    --io: cubic-bezier(.65,0,.35,1);       /* move A to B, camera */
+    --page: #E9E6DF;
+    --label: #6b6861;
+    --card: #F7F5F0;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--page); color: #3A3A3A; font-family: "Noto Sans SC", system-ui, sans-serif; padding: 32px 16px 64px; }
+  header { max-width: 1100px; margin: 0 auto 8px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
+  header h1 { font-size: 20px; font-weight: 500; }
+  header p { width: 100%; font-size: 14px; color: var(--label); }
+  button { font: inherit; font-size: 14px; padding: 6px 14px; border: 1px solid #D9D5CC; background: var(--card); color: #3A3A3A; border-radius: 999px; cursor: pointer; }
+  h2 { max-width: 1100px; margin: 36px auto 12px; font-size: 16px; font-weight: 500; }
+  .grid { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+  figure { cursor: pointer; }
+  figcaption { font-size: 13px; color: var(--label); margin-top: 6px; line-height: 1.5; }
+  figcaption b { color: #3A3A3A; font-weight: 500; margin-right: 6px; }
+
+  /* 960x540 stage scaled to the tile */
+  .wrap { aspect-ratio: 16/9; position: relative; overflow: hidden; border-radius: 6px; }
+  .stage { position: absolute; top: 0; left: 0; width: 960px; height: 540px; transform-origin: 0 0; overflow: hidden; }
+  .stage * { position: absolute; }
+
+  /* palettes */
+  .w { background: #F7F5F0; color: #3A3A3A; --a: #8C2F39; --sub: #8A8780; --line: #D9D5CC; }
+  .d { background: #1E1F22; color: #E6E6E6; --a: #3DDC97; --sub: #9AA0A6; --line: #34373C; font-family: "JetBrains Mono", ui-monospace, monospace; }
+  .p { background: #111; color: #fff; --a: #FFD400; font-weight: 700; }
+
+  /* Nothing animates until the tile gets .play, so replay = remove and re-add the class. */
+  .stage [class*="m-"] { animation-fill-mode: both; animation-play-state: paused; }
+  .stage[class*="m-"] { animation-fill-mode: both; }
+  .play [class*="m-"] { animation-play-state: running; }
+
+  /* ---------- Minimal White ---------- */
+  .m-up { animation: up .8s var(--out); }
+  @keyframes up { from { opacity: 0; transform: translateY(24px); } }
+  .w .t { font-size: 44px; font-weight: 500; left: 80px; }
+  .w .s { font-size: 26px; font-weight: 300; color: var(--sub); left: 80px; }
+
+  .ul { background: linear-gradient(transparent 82%, var(--a) 82%, var(--a) 92%, transparent 92%) no-repeat; background-size: 0 100%; position: static !important; }
+  .m-ul { animation: ul .6s .5s var(--out); }
+  @keyframes ul { to { background-size: 100% 100%; } }
+
+  .bars { left: 80px; right: 80px; top: 170px; height: 200px; display: flex; align-items: center; gap: 5px; }
+  .bars i { position: static; flex: 1; background: #3A3A3A; opacity: .7; border-radius: 3px; }
+  .box { border: 2px dashed var(--a); border-radius: 10px; top: 150px; height: 240px; }
+  .box span { top: -40px; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 22px; color: var(--a); }
+  .m-box { animation: box .4s .6s var(--out); }
+  @keyframes box { from { opacity: 0; transform: scale(.98); } }
+
+  .num { font-size: 150px; font-weight: 300; left: 0; right: 0; top: 150px; text-align: center; letter-spacing: -.02em; }
+  .num small { position: static; font-size: 44px; margin-left: 8px; color: var(--sub); }
+
+  .rail { left: 120px; right: 120px; top: 268px; height: 3px; background: var(--a); transform-origin: left; }
+  .m-grow { animation: grow .8s .3s var(--out); }
+  @keyframes grow { from { transform: scaleX(0); } }
+  .dot { width: 22px; height: 22px; border-radius: 50%; background: var(--a); top: 259px; }
+
+  .card { width: 360px; height: 220px; top: 150px; border: 2px solid var(--line); border-radius: 16px; background: #fff; padding: 28px; font-size: 34px; font-weight: 500; }
+  .card span { position: static; display: block; font-size: 22px; font-weight: 300; color: var(--sub); margin-top: 10px; }
+  .m-dim { animation: dim .3s .5s linear; animation-fill-mode: forwards !important; }
+  @keyframes dim { to { opacity: .35; } }
+
+  /* ---------- Dark Tech ---------- */
+  .term { left: 60px; right: 60px; top: 70px; bottom: 70px; background: #26282C; border: 1px solid var(--line); border-radius: 14px; }
+  .term .ln { left: 36px; font-size: 22px; color: var(--sub); white-space: nowrap; }
+  .term .ln.c { color: #E6E6E6; }
+  .m-line { animation: fade .15s linear; }
+  @keyframes fade { from { opacity: 0; } }
+  .hit { position: static !important; }
+  .m-hit { display: inline-block; animation: hit .4s 1.3s var(--back); }
+  @keyframes hit { from { color: var(--sub); transform: scale(1); } 40% { color: var(--a); transform: scale(1.12); } to { color: var(--a); transform: scale(1); } }
+
+  .typed { position: static !important; display: inline-block; overflow: hidden; white-space: nowrap; vertical-align: bottom; width: 0; }
+  .m-type { animation: type 1.2s .3s steps(24) forwards; }
+  @keyframes type { to { width: 24ch; } }
+  .caret { position: static !important; display: inline-block; width: 12px; height: 26px; background: var(--a); vertical-align: middle; margin-left: 4px; }
+  .m-caret { animation: blink .5s 1.5s steps(1) 4; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .btn { left: 380px; top: 230px; width: 200px; height: 72px; border-radius: 12px; background: var(--a); color: #1E1F22; font-size: 26px; text-align: center; line-height: 72px; font-family: "Noto Sans SC", sans-serif; font-weight: 500; }
+  .cur { width: 34px; height: 34px; left: 0; top: 0; }
+  .m-cur { animation: cur 1.6s var(--io); }
+  @keyframes cur { 0% { transform: translate(760px, 430px); } 35%, 100% { transform: translate(500px, 262px); } 42% { transform: translate(500px, 262px) scale(.78); } 50% { transform: translate(500px, 262px) scale(1); } }
+  .rip { width: 80px; height: 80px; left: 470px; top: 232px; border-radius: 50%; border: 3px solid #E6E6E6; opacity: 0; }
+  .m-rip { animation: rip .45s .62s var(--out); }
+  @keyframes rip { from { opacity: 1; transform: scale(.2); } to { opacity: 0; transform: scale(1.6); } }
+
+  .win { left: 200px; right: 200px; top: 110px; bottom: 110px; background: #26282C; border: 1px solid var(--line); border-radius: 14px; }
+  .win .bar { left: 0; right: 0; top: 0; height: 40px; border-bottom: 1px solid var(--line); }
+  .win .bar i { width: 12px; height: 12px; border-radius: 50%; background: #45484E; top: 14px; }
+  .m-pop { animation: wpop .3s .3s var(--out); }
+  @keyframes wpop { from { opacity: 0; transform: scale(.96); } }
+
+  .shot { left: 0; top: 0; width: 960px; height: 540px; transform-origin: 700px 380px; }
+  .shot i { height: 14px; border-radius: 7px; background: #34373C; left: 80px; }
+  .shot .key { background: var(--a); }
+  .m-push { animation: push 2.4s var(--io); }
+  @keyframes push { 0%, 10% { transform: scale(1); } 40%, 70% { transform: scale(1.7); } 100% { transform: scale(1); } }
+
+  /* ---------- Big Type ---------- */
+  .big { left: 0; right: 0; text-align: center; line-height: 1; }
+  .m-cutA { animation: cutA 1.6s steps(1); }
+  @keyframes cutA { 0% { opacity: 1; } 50%, 100% { opacity: 0; } }
+  .m-cutB { animation: cutB 1.6s steps(1); }
+  @keyframes cutB { 0% { opacity: 0; } 50%, 100% { opacity: 1; } }
+
+  .m-soft { animation: soft .18s var(--out); }
+  @keyframes soft { from { opacity: 0; transform: scale(1.06); } }
+
+  .m-slam { animation: slam .24s .3s var(--in); }
+  @keyframes slam { from { opacity: 0; transform: scale(2.4); } }
+  .m-shake { animation: shake .08s .54s steps(1) 1; }
+  @keyframes shake { 0% { transform: translate(6px, -4px); } 50% { transform: translate(-5px, 3px); } }
+
+  .m-inv { animation: inv 1.6s steps(1); }
+  @keyframes inv { 0% { background: #111; color: #fff; } 50%, 100% { background: #fff; color: #111; } }
+
+  .kw { position: static !important; }
+  .m-kw { animation: kw .01s .6s steps(1) forwards; }
+  @keyframes kw { to { color: var(--a); } }
+</style>
+</head>
+<body>
+<header>
+  <h1>动作样例：三种风格的动作清单</h1>
+  <button id="all">全部重播</button>
+  <p>参数和用法见 STYLE-SHEET.md 和 references/staging.md。点任意一格重播。</p>
+</header>
+
+<h2>① 素白风：安静、慢、准</h2>
+<div class="grid">
+  <figure><div class="wrap"><div class="stage w">
+    <div class="t m-up" style="top:150px">先找没说话的地方</div>
+    <div class="s m-up" style="top:240px;animation-delay:.12s">用静音检测找剪点</div>
+    <div class="s m-up" style="top:290px;animation-delay:.24s">不靠转写时间戳</div>
+  </div></div><figcaption><b>淡入上滑</b>下一条信息来了 · 0.8 秒，错开 0.12 秒</figcaption></figure>
+
+  <figure><div class="wrap"><div class="stage w">
+    <div class="t" style="top:230px">声音停下来的地方，就是<span class="ul m-ul">可以下刀</span>的地方</div>
+  </div></div><figcaption><b>下划线画出</b>这个词是重点 · 落在说到它的那一刻</figcaption></figure>
+
+  <figure><div class="wrap"><div class="stage w">
+    <div class="bars" data-bars="60,22,30,42,48"></div>
+    <div class="box m-box" style="left:262px;width:117px"><span>停顿 1.8 秒</span></div>
+    <div class="box m-box" style="left:595px;width:117px;animation-delay:.9s"><span>停顿 2.4 秒</span></div>
+  </div></div><figcaption><b>虚线框圈出</b>看这里 · 只圈一个区域</figcaption></figure>
+
+  <figure><div class="wrap"><div class="stage w">
+    <div class="s" style="top:110px;left:0;right:0;text-align:center">剪掉的废话</div>
+    <div class="num"><span style="position:static" data-count="208" data-delay="300">0</span><small>秒</small></div>
+  </div></div><figcaption><b>数字滚动</b>这个数字是真的 · 1 秒，最后慢慢停住</figcaption></figure>
+
+  <figure><div class="wrap"><div class="stage w">
+    <div class="s" style="top:200px;left:110px">原片 8:40</div>
+    <div class="s" style="top:200px;left:auto;right:110px">成片 5:12</div>
+    <div class="dot" style="left:110px"></div>
+    <div class="rail m-grow"></div>
+    <div class="dot m-up" style="left:auto;right:110px;animation-delay:1s"></div>
+  </div></div><figcaption><b>细线生长</b>从 A 到 B · 0.8 秒 ease-out</figcaption></figure>
+
+  <figure><div class="wrap"><div class="stage w">
+    <div class="card m-dim" style="left:80px">转写<span>已经讲过</span></div>
+    <div class="card m-up" style="left:520px;animation-delay:.7s">剪 gap<span>现在讲这个</span></div>
+  </div></div><figcaption><b>变暗退后</b>先放一边，看新的 · 0.3 秒到 35%</figcaption></figure>
+</div>
+
+<h2>② 深色科技风：像机器在运行，干脆</h2>
+<div class="grid">
+  <figure><div class="wrap"><div class="stage d"><div class="term">
+    <div class="ln c" style="top:40px">$ ffmpeg -af silencedetect</div>
+    <div class="ln m-line" style="top:100px;animation-delay:.4s">silence_start: 41.62</div>
+    <div class="ln m-line" style="top:150px;animation-delay:.6s">silence_end: 43.41</div>
+    <div class="ln m-line" style="top:200px;animation-delay:.8s">silence_start: 88.10</div>
+    <div class="ln m-line" style="top:250px;animation-delay:1.0s">silence_end: 90.52</div>
+    <div class="ln m-line" style="top:310px;animation-delay:1.2s">found: <span class="hit m-hit">2 gaps · 4.2s</span></div>
+  </div></div></div><figcaption><b>逐行输出 + 高亮关键值</b>程序正在跑，结果是这个</figcaption></figure>
+
+  <figure><div class="wrap"><div class="stage d"><div class="term">
+    <div class="ln c" style="top:180px;font-size:28px">$ <span class="typed m-type">whisper talk.mp4 --words</span><span class="caret m-caret"></span></div>
+  </div></div></div><figcaption><b>打字</b>正在输入这条命令 · 匀速，末尾光标闪</figcaption></figure>
+
+  <figure><div class="wrap"><div class="stage d">
+    <div class="btn">开始渲染</div>
+    <div class="rip m-rip"></div>
+    <svg class="cur m-cur" viewBox="0 0 32 32"><path d="M5 3 L5 25 L11 19.5 L15 28.5 L19 26.8 L15 18 L23 18 Z" fill="#E6E6E6" stroke="#1E1F22" stroke-width="2" stroke-linejoin="round"/></svg>
+  </div></div><figcaption><b>光标点击</b>就是这么操作的 · 移过去、按下、波纹</figcaption></figure>
+
+  <figure><div class="wrap"><div class="stage d">
+    <div class="win m-pop"><div class="bar"><i style="left:16px"></i><i style="left:36px"></i><i style="left:56px"></i></div>
+      <div class="ln" style="top:90px;left:36px;font-size:22px;color:#9AA0A6">// preview.html</div>
+      <div class="ln" style="top:140px;left:36px;font-size:22px">ready on localhost:3000</div>
+    </div>
+  </div></div><figcaption><b>窗口弹出</b>打开了一个新东西 · 0.96→1，0.3 秒</figcaption></figure>
+
+  <figure><div class="wrap"><div class="stage d">
+    <div class="shot m-push">
+      <i style="top:80px;width:600px"></i><i style="top:130px;width:720px"></i><i style="top:180px;width:520px"></i>
+      <i style="top:260px;width:680px"></i><i style="top:310px;width:560px"></i>
+      <i class="key" style="top:372px;left:560px;width:280px;height:20px"></i>
+      <i style="top:440px;width:640px"></i>
+    </div>
+  </div></div><figcaption><b>推近</b>看这一小块 · 推进去，讲完拉回来</figcaption></figure>
+</div>
+
+<h2>③ 大字海报风：快、狠、少</h2>
+<div class="grid">
+  <figure><div class="wrap"><div class="stage p">
+    <div class="big m-cutA" style="top:200px;font-size:140px">三分半</div>
+    <div class="big m-cutB" style="top:200px;font-size:140px">全是废话</div>
+  </div></div><figcaption><b>硬切</b>下一句 · 0 秒，不淡入淡出</figcaption></figure>
+
+  <figure><div class="wrap"><div class="stage p">
+    <div class="big m-soft" style="top:170px;font-size:120px;color:var(--a)">8 分钟</div>
+    <div class="big m-soft" style="top:340px;font-size:30px;font-weight:400;color:#9A9A9A;animation-delay:.5s">一条口播原片的长度</div>
+  </div></div><figcaption><b>轻弹出</b>这句话出来了 · 1.06→1，0.18 秒</figcaption></figure>
+
+  <figure><div class="wrap"><div class="stage p m-shake">
+    <div class="big m-slam" style="top:190px;font-size:160px;color:var(--a)">删掉</div>
+  </div></div><figcaption><b>砸字</b>就是这个 · 2.4→1，ease-in，落地抖一下</figcaption></figure>
+
+  <figure><div class="wrap"><div class="stage p m-inv">
+    <div class="big" style="top:200px;font-size:120px">但是</div>
+  </div></div><figcaption><b>反色</b>情绪转折 · 黑白互换，硬切</figcaption></figure>
+
+  <figure><div class="wrap"><div class="stage p">
+    <div class="big" style="top:200px;font-size:110px">剪掉的是<span class="kw m-kw">犹豫</span></div>
+  </div></div><figcaption><b>关键词变色</b>这个词最重要 · 直接变色，不过渡</figcaption></figure>
+</div>
+
+<script>
+  // Waveform bars with two silent gaps.
+  document.querySelectorAll('[data-bars]').forEach(w => {
+    const n = 64, gaps = [[14, 22], [42, 50]];
+    for (let i = 0; i < n; i++) {
+      const b = document.createElement('i');
+      if (gaps.some(([a, z]) => i >= a && i < z)) b.style.visibility = 'hidden';
+      else b.style.height = (30 + Math.abs(Math.sin(i * 1.7) * 60 + Math.sin(i * .37) * 40)) + '%';
+      w.appendChild(b);
+    }
+  });
+
+  // Count up with the same ease-out as the CSS token, landing exactly on the real value.
+  const easeOut = t => 1 - Math.pow(1 - t, 3);
+  function count(el) {
+    const to = +el.dataset.count, delay = +el.dataset.delay || 0, d = 1000;
+    clearTimeout(el._t); cancelAnimationFrame(el._r);
+    el.textContent = '0';
+    el._t = setTimeout(() => {
+      const t0 = performance.now();
+      const step = now => {
+        const k = Math.min(1, (now - t0) / d);
+        el.textContent = Math.round(to * easeOut(k));
+        if (k < 1) el._r = requestAnimationFrame(step);
+      };
+      el._r = requestAnimationFrame(step);
+    }, delay);
+  }
+
+  // Replay a tile: drop .play, force a reflow so animations restart, add it back.
+  function play(stage) {
+    stage.classList.remove('play');
+    stage.querySelectorAll('[class*="m-"]').forEach(e => { e.style.animation = 'none'; e.offsetWidth; e.style.animation = ''; });
+    if (stage.matches('[class*="m-"]')) { stage.style.animation = 'none'; stage.offsetWidth; stage.style.animation = ''; }
+    void stage.offsetWidth;
+    stage.classList.add('play');
+    stage.querySelectorAll('[data-count]').forEach(count);
+  }
+
+  const stages = [...document.querySelectorAll('.stage')];
+  function fit() { stages.forEach(s => { s.style.transform = `scale(${s.parentElement.clientWidth / 960})`; }); }
+  addEventListener('resize', fit); fit();
+
+  document.querySelectorAll('figure').forEach(f => f.addEventListener('click', () => play(f.querySelector('.stage'))));
+  document.getElementById('all').onclick = () => stages.forEach(play);
+
+  // Play each tile the first time it scrolls into view.
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { play(e.target); io.unobserve(e.target); }
+  }), { threshold: .5 });
+  stages.forEach(s => io.observe(s));
+</script>
+</body>
+</html>
